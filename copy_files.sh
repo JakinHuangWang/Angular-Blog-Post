@@ -1,0 +1,1 @@
+cp -r --exclude='.git/' ./ /mnt/c/CS144/project4/

@@ -1,0 +1,10 @@
+<div>
+    <div *ngFor = "let post of posts">
+        <p>{{ post.postid }}</p>
+        <p>{{ post.created }}</p>
+        <p>{{ post.modified }}</p>
+        <p>{{ post.title }}</p>
+        <p>{{ post.body }}</p>
+    </div>
+    <button (click)="trigger(3)">Trigger</button>
+</div>

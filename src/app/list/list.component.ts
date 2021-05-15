@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Input, Output, EventEmitter } from '@angular/core';
+import { BlogService } from '../blog-service.service';
 import { Post } from '../../Post';
 
 @Component({
@@ -7,17 +8,17 @@ import { Post } from '../../Post';
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.css']
 })
+  
 export class ListComponent implements OnInit {
 
-  @Input() posts: Post[];
+  @Input() posts: Post[] = [];
   @Output() openPost = new EventEmitter();
   @Output() newPost = new EventEmitter();
 
-  constructor() {
-    this.posts = [];
-  }
+  constructor(private BlogService: BlogService) {}
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    this.posts = await this.BlogService.fetchPosts("123");
   }
 
   trigger(value: number) {

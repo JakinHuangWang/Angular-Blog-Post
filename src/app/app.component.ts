@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+import { BlogService } from './blog-service.service';
 import { Post } from '../Post';
+enum AppState { List, Edit, Preview };
 
 @Component({
   selector: 'app-root',
@@ -7,28 +9,42 @@ import { Post } from '../Post';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  posts: Post[] = [
-    {
-      postid: 0,
-      created: 0,
-      modified: 0,
-      title: "Good Day",
-      body: "Very Good Day"
-    },
-    {
-      postid: 1,
-      created: 2,
-      modified: 3,
-      title: "Good Week",
-      body: "Very Good Week"
-    }
-  ];
+
+  posts: Post[] = [];
+  testPost: Post = {} as Post;
+  state: number;
 
   openPostHandler(value: number) {
     console.log(value);
+    this.state = AppState.List;
   }
 
-  newPostHandler() {
-    
+  constructor(private BlogService: BlogService) {
+    this.state = AppState.List;
+  }
+
+  async ngOnInit() {
+    this.posts = await this.BlogService.fetchPosts("123");
+    this.testPost = await this.BlogService.getPost("123", 1);
+  }
+
+  newPostHandler() { }
+  
+  savePostHandler(post: Post) {
+    console.log(post);
+  }
+
+  deletePostHandler(post: Post) {
+    console.log(post);
+  }
+
+  previewPostHandler(post: Post) {
+    this.state = AppState.Preview;
+    console.log(post);
+  }
+
+  editPostHandler(post: Post) {
+    this.state = AppState.Edit;
+    console.log(post);
   }
 }

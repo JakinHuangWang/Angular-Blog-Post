@@ -6,14 +6,14 @@
 </div>
 
 <div *ngIf="testPost?.postid">
-    <app-edit [post]="testPost"
+    <app-edit [post]="currentPost"
             (savePost)="savePostHandler($event);" 
             (deletePost)="deletePostHandler($event);" 
             (previewPost)="previewPostHandler($event);">
     </app-edit>
 </div>
 <div *ngIf="testPost?.postid">
-    <app-preview [post]="testPost"
+    <app-preview [post]="currentPost"
                 (editPost)="editPostHandler($event)">
     </app-preview>
 </div>

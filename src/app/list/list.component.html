@@ -5,6 +5,6 @@
         <p>{{ post.modified }}</p>
         <p>{{ post.title }}</p>
         <p>{{ post.body }}</p>
+        <button (click)="trigger(post.postid)">Trigger</button>
     </div>
-    <button (click)="trigger(3)">Trigger</button>
 </div>

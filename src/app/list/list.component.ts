@@ -21,9 +21,9 @@ export class ListComponent implements OnInit {
     this.posts = await this.BlogService.fetchPosts("123");
   }
 
-  trigger(value: number) {
-    console.log("trigger");
-    this.openPost.emit(value);
+  async trigger(postid: number) {
+    const currentPost = await this.BlogService.getPost("", postid);
+    this.openPost.emit(currentPost);
   }
 
 }

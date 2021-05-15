@@ -11,21 +11,21 @@ enum AppState { List, Edit, Preview };
 export class AppComponent {
 
   posts: Post[] = [];
-  testPost: Post = {} as Post;
-  state: number;
+  currentPost: Post = {} as Post;
+  state: number = 0;
 
-  openPostHandler(value: number) {
-    console.log(value);
-    this.state = AppState.List;
-  }
-
-  constructor(private BlogService: BlogService) {
-    this.state = AppState.List;
-  }
+  
+  constructor(private BlogService: BlogService) {}
 
   async ngOnInit() {
+    this.state = AppState.List;
     this.posts = await this.BlogService.fetchPosts("123");
-    this.testPost = await this.BlogService.getPost("123", 1);
+    this.currentPost = await this.BlogService.getPost("123", 1);
+  }
+
+  openPostHandler(post: Post) {
+    this.currentPost = post;
+    this.state = AppState.Edit;
   }
 
   newPostHandler() { }

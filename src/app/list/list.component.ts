@@ -25,7 +25,7 @@ export class ListComponent implements OnInit {
   }
 
   triggerNewPost() {
-    this.openPost.emit({});
+    this.newPost.emit();
   }
 
 }

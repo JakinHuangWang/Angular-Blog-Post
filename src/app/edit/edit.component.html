@@ -3,10 +3,10 @@
 <button (click)="triggerPreview($event)">Preview</button>
 <div>
     <div>
-        <span>Title: </span><input value="{{ post.title }}" (keyup)="onTitleChange($event);">
+        <span>Title: </span><input value="{{ post.title }}" (keyup)="triggerSave($event);">
     </div>
     <div>
-        <span>Body: </span><textarea rows="20" (keyup)="onBodyChange($event);">{{ post.body }}</textarea>
+        <span>Body: </span><textarea rows="20" (keyup)="triggerSave($event);">{{ post.body }}</textarea>
     </div>
     <div>
         <span>Last modified at {{post.modified | date:"HH:MM:SS MM/dd/yy"}}</span>

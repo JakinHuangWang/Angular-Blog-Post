@@ -55,21 +55,23 @@ export class BlogService {
     //
 
     fetchPosts(username: string): Promise<Post[]> {
-        let keys = Object.keys(localStorage);
-        let posts: Post[] = [];
-        for (let i = 0; i < keys.length; i++) {
-            if (this.isMyKey(keys[i])) {
-                posts.push(this.parse(localStorage[keys[i]]));
+        let queryString = `/api/posts?username=${username}`;
+        return new Promise((resolve, reject) => {
+            let posts = fetch(queryString).then((resp) => resp.json());
+            if (posts) {
+                resolve(posts);
+            } else {
+                reject(new Error("404"));
             }
-        }
-        return Promise.resolve(posts);
+        });
     }
 
     getPost(username: string, postid: number): Promise<Post> {
+        let queryString = `/api/posts?username=${username}&postid=${postid}`;
         return new Promise((resolve, reject) => {
-            let post = localStorage.getItem(this.key(postid));
+            let post = fetch(queryString).then((resp) => resp.json());
             if (post) {
-                resolve(this.parse(post));
+                resolve(post);
             } else {
                 reject(new Error("404"));
             }
@@ -77,37 +79,30 @@ export class BlogService {
     }
 
     setPost(username: string, p: Post): Promise<Post> {
+        let queryString = "/api/posts";
         return new Promise((resolve, reject) => {
-            let post = new Post();
-            let now  = new Date().getTime();
-            post.postid = p.postid;
-            post.title  = p.title;
-            post.body   = p.body;
-            post.created  = p.created;
-            post.modified = now;
-        
-            if (post.postid === 0) {
-                post.postid  = ++this.maxid;
-                post.created = now;
-                localStorage[this.key(post.postid)] = this.serialize(post);
-                resolve(post);
-            } else {
-                let p = localStorage.getItem(this.key(post.postid));
-                if (p) {
-                    localStorage[this.key(post.postid)] = this.serialize(post);
-                    resolve(post);
-                } else {
-                    reject(new Error("404"));
+            let post = fetch(queryString, {
+                method: 'post',
+                body: JSON.stringify(p),
+                headers: {
+                    'Content-Type': 'application/json'
                 }
+            });
+            if (post) {
+                resolve(p);
+            } else {
+                reject(new Error("404"));
             }
         });
     }
 
     deletePost(username: string, postid: number): Promise<void> {
+        let queryString = `/api/posts?username=${username}&postid=${postid}`;
         return new Promise((resolve, reject) => {
-            let p = localStorage.getItem(this.key(postid));
-            if (p) {
-                localStorage.removeItem(this.key(postid));
+            let post = fetch(queryString, {
+                method: 'delete'
+            })
+            if (post) {
                 resolve();
             } else {
                 reject(new Error("404"));

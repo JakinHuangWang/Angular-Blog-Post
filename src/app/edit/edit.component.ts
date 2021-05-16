@@ -11,7 +11,7 @@ import { Post } from '../../Post';
 export class EditComponent implements OnInit {
 
   @Input() post: Post = {} as Post;
-  @Output() savePost: EventEmitter<Post> = new EventEmitter();
+  @Output() savePost: EventEmitter<EventTarget> = new EventEmitter();
   @Output() deletePost: EventEmitter<Post> = new EventEmitter();
   @Output() previewPost: EventEmitter<Post> = new EventEmitter();
 
@@ -21,8 +21,8 @@ export class EditComponent implements OnInit {
   }
 
   triggerSave(event: Event) {
-    this.savePost.emit(this.post);
-    this.BlogService.setPost("", this.post);
+    if (event.target)
+      this.savePost.emit(event.target);
   }
 
   triggerDelete(event: Event) {
@@ -30,20 +30,19 @@ export class EditComponent implements OnInit {
   }
 
   triggerPreview(event: Event) {
-    console.log(event.target);
     this.previewPost.emit(this.post);
   }
 
-  onTitleChange(event: Event) {
-    const newValue = (event.target as HTMLInputElement).value;
-    this.post.title = newValue;
-    this.savePost.emit(this.post);
-  }
+  // onTitleChange(event: Event) {
+  //   const newValue = (event.target as HTMLInputElement).value;
+  //   this.post.title = newValue;
+  //   this.savePost.emit({ content: this.post, target: event});
+  // }
 
-  onBodyChange(event: Event) {
-    const newValue = (event.target as HTMLTextAreaElement).value;
-    this.post.body = newValue;
-    this.savePost.emit(this.post);
-  }
+  // onBodyChange(event: Event) {
+  //   const newValue = (event.target as HTMLTextAreaElement).value;
+  //   this.post.body = newValue;
+  //   this.savePost.emit({ content: this.post, target: event});
+  // }
 
 }

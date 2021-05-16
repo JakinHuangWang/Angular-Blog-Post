@@ -1,23 +1,23 @@
 <div class="list-container">
     <div style="margin-right: 10%;">
-        <div *ngIf="posts">
+        <div>
             <app-list [posts]="posts" 
-                    (openPost)="openPostHandler($event);" 
-                    (newPost)="newPostHandler();">
+                      (openPost)="openPostHandler($event);" 
+                      (newPost)="newPostHandler();">
             </app-list>
         </div>
     </div>
     <div>
         <div *ngIf="currentPost && state == edit_state">
             <app-edit [post]="currentPost"
-                    (savePost)="savePostHandler($event);" 
-                    (deletePost)="deletePostHandler($event);" 
-                    (previewPost)="previewPostHandler($event);">
+                      (savePost)="savePostHandler($event);" 
+                      (deletePost)="deletePostHandler($event);" 
+                      (previewPost)="previewPostHandler($event);">
             </app-edit>
         </div>
         <div *ngIf="currentPost && state == preview_state">
             <app-preview [post]="currentPost"
-                        (editPost)="editPostHandler($event)">
+                         (editPost)="editPostHandler($event)">
             </app-preview>
         </div>
     </div>

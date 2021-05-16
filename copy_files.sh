@@ -1,1 +1,1 @@
-cp -r --exclude='.git/' ./ /mnt/c/CS144/project4/
+rsync -a --exclude='./git/' . ~/shared/project4/

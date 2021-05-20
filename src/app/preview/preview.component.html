@@ -1,8 +1,5 @@
 <button (click)="trigger($event)">Edit</button>
 <div>
-    <p>{{ markdown_post.postid }}</p>
-    <p>{{ markdown_post.created }}</p>
-    <p>{{ markdown_post.modified }}</p>
     <p [innerHTML]="markdown_post.title"></p>
     <p [innerHTML]="markdown_post.body"></p>
 </div>

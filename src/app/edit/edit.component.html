@@ -8,7 +8,7 @@
     <div>
         <span>Body: </span><textarea rows="20" (keyup)="triggerSave($event);">{{ post.body }}</textarea>
     </div>
-    <div>
+    <div *ngIf="post.modified > 0">
         <span>Last modified at {{post.modified | date:"HH:MM:SS MM/dd/yy"}}</span>
     </div>
 </div>

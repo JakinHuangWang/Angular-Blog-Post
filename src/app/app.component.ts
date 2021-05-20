@@ -13,7 +13,7 @@ export class AppComponent {
 
   posts: Post[] = [];
   currentPost: Post = {} as Post;
-  state: number = 0;
+  state: number = AppState.List;
   list_state: number = AppState.List;
   edit_state: number = AppState.Edit;
   preview_state: number = AppState.Preview;
@@ -25,17 +25,52 @@ export class AppComponent {
   async onHashChange() {
     const fragment = window.location.hash;
     const fragmentArr = fragment.split('/');
-    console.log(fragmentArr);
 
     if (fragmentArr.length < 3) {
       this.state = AppState.List;
       this.posts = await this.BlogService.fetchPosts(this.username);
     } else if (fragmentArr[1] == 'edit') {
+      let postid = parseInt(fragmentArr[2]);
+      if (postid == 0) {
+        this.currentPost = {
+          postid: postid,
+          username: this.username,
+          title: "",
+          body: "",
+          created: 0,
+          modified: 0
+        } as Post;
+      } else {
+        try {
+          this.currentPost = await this.BlogService.getPost(this.username, postid);
+        } catch (error) {
+          this.currentPost = {
+            postid: postid,
+            username: this.username,
+            title: "",
+            body: "",
+            created: 0,
+            modified: 0
+          } as Post;
+        }
+      }
+      
       this.state = AppState.Edit;
-      this.currentPost = await this.BlogService.getPost(this.username, parseInt(fragmentArr[2]));
-    } else if (fragmentArr[2] == 'preview') {
+    } else if (fragmentArr[1] == 'preview') {
+      let postid = parseInt(fragmentArr[2]);
       this.state = AppState.Preview;
-      this.currentPost = await this.BlogService.getPost(this.username, parseInt(fragmentArr[2]));
+      if (postid == 0) {
+        this.currentPost = {
+          postid: postid,
+          username: this.username,
+          title: "",
+          body: "",
+          created: 0,
+          modified: 0
+        } as Post;
+      } else {
+        this.currentPost = await this.BlogService.getPost(this.username, postid);
+      }
     } else {
       this.state = AppState.List;
       this.currentPost = {} as Post;
@@ -43,21 +78,31 @@ export class AppComponent {
   }
 
   async ngOnInit() {
-    window.location.hash = "#/";
-    this.state = AppState.List;
+    // const fragment = window.location.hash;
+    // const fragmentArr = fragment.split('/');
+    // if (fragmentArr.length < 3) {
+    //   this.state = AppState.List;
+    // } else if (fragmentArr[1] == 'edit') {
+    //   this.state = AppState.Edit;
+    // } else if (fragmentArr[1] == 'preview') {
+    //   this.state = AppState.Preview;
+    // } else {
+    //   this.state = AppState.List;
+    // }
 
     // Parse the JWT Cookie
     const cookies = cookie.parse(document.cookie);
     const JWT = this.parseJWT(cookies["jwt"]);
     this.username = JWT['usr'];
+
     // Intialize the posts from our service
     this.posts = await this.BlogService.fetchPosts(this.username);
+    this.onHashChange();
   }
 
   // event handlers for the list component
   openPostHandler(post: Post) {
     this.currentPost = post;
-    this.state = AppState.Edit;
     window.location.hash = `#/edit/${post.postid}`;
   }
 
@@ -70,7 +115,6 @@ export class AppComponent {
       created: 0,
       modified: 0
     } as Post;
-    this.state = AppState.Edit;
     window.location.hash = `#/edit/0`;
   }
   
@@ -79,32 +123,46 @@ export class AppComponent {
     if (target instanceof HTMLInputElement) {
       const newTitle = (target as HTMLInputElement).value;
       this.currentPost.title = newTitle;
+      this.posts = this.posts.map((post) => { return post.postid == this.currentPost.postid ? this.currentPost : post });
     } else if (target instanceof HTMLTextAreaElement) {
       const newBody = (target as HTMLTextAreaElement).value;
       this.currentPost.body = newBody;
+      this.posts = this.posts.map((post) => { return post.postid == this.currentPost.postid ? this.currentPost : post});
     } else if (target instanceof HTMLButtonElement) {
       this.currentPost.modified = Date.now();
+      this.currentPost.created = Date.now()
       await this.BlogService.setPost(this.username, this.currentPost);
-      console.log(this.currentPost);
       this.posts = await this.BlogService.fetchPosts(this.username);
     }
   }
 
   async deletePostHandler(post: Post) {
-    this.BlogService.deletePost(this.username, post.postid);
-    this.posts = await this.BlogService.fetchPosts(this.username);
-    if (this.posts) {
-      this.state = AppState.List;
+    if (post.postid == 0) {
+      this.currentPost = {
+        postid: 0,
+        username: this.username,
+        title: "",
+        body: "",
+        created: 0,
+        modified: 0
+      } as Post;
+      window.location.hash = '#/';
+    } else {
+      this.BlogService.deletePost(this.username, post.postid);
+      this.posts = await this.BlogService.fetchPosts(this.username);
+      if (this.posts) {
+        window.location.hash = '#/'
+      }
     }
   }
 
   previewPostHandler(post: Post) {
-    this.state = AppState.Preview;
+    window.location.hash = `#/preview/${post.postid}`;
   }
 
   // event handlers for the preview component
   editPostHandler(post: Post) {
-    this.state = AppState.Edit;
+    window.location.hash = `#/edit/${post.postid}`;
   }
 
   // function to parse JWT token
